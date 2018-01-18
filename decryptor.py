@@ -45,7 +45,10 @@ def decrypt(bytes_input, decode=""):
                 packed_bytes = stream.read(length)
                 if len(packed_bytes) != length:
                     raise InvalidPBError("not a float")
-                value = struct.unpack(fmt, packed_bytes)
+                try:
+                    value = struct.unpack(fmt, packed_bytes)[0]
+                except:
+                    raise InvalidPBError("not a float")
             elif flag & WireType.LENGTHDELIMITED:
                 wire_type = WireType.LENGTHDELIMITED
                 next_field = _test_field(flag, wire_type, field)
@@ -75,7 +78,11 @@ def decrypt(bytes_input, decode=""):
                 pass
         except (EOFError, InvalidPBError):
             # 读取异常 直接返回原串
-            rv = stream.getvalue()
+            try:
+                rv = stream.getvalue()
+            except:
+                stream.seek(0)
+                rv = stream.read()
             if decode:
                 rv = rv.decode(decode)
             return rv
