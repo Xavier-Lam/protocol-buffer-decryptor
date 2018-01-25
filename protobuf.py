@@ -100,6 +100,12 @@ def decrypt(bytes_input, decode=""):
     return decoded
 
 def encrypt(data, encoding=""):
+    """编码
+
+    :param data 待编码的对象
+    :param encoding 字符串编码
+    """
+
     if isinstance(data, bytes):
         return data
     length_field = lambda v: varint.encode(len(v)) + v
